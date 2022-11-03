@@ -44,9 +44,25 @@
               "target": "Package",
               "version": "[1.7.1, )"
             },
+            "Microsoft.ML.ImageAnalytics": {
+              "target": "Package",
+              "version": "[1.7.1, )"
+            },
+            "Microsoft.ML.OnnxRuntime": {
+              "target": "Package",
+              "version": "[1.13.1, )"
+            },
+            "Microsoft.ML.OnnxTransformer": {
+              "target": "Package",
+              "version": "[1.7.1, )"
+            },
             "MudBlazor": {
               "target": "Package",
               "version": "[6.0.17, )"
+            },
+            "MudBlazor.ThemeManager": {
+              "target": "Package",
+              "version": "[1.0.7, )"
             }
           },
           "imports": [

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "7iC3TIABi9DfokkKFDdbuBMO80NAaf2YiEmJMTZgWKs=",
+  "Hash": "5bmXcUSzc2dokB78KiSZijj3j5bTiR9hL4OUT4IzmIM=",
   "Source": "BlazorMLWebApp",
   "BasePath": "_content/BlazorMLWebApp",
   "Mode": "Default",
@@ -16,6 +16,23 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "C:\\Users\\yoshi\\.nuget\\packages\\mudblazor.thememanager\\1.0.7\\staticwebassets\\MudBlazorThemeManager.css",
+      "SourceId": "MudBlazor.ThemeManager",
+      "SourceType": "Package",
+      "ContentRoot": "C:\\Users\\yoshi\\.nuget\\packages\\mudblazor.thememanager\\1.0.7\\staticwebassets\\",
+      "BasePath": "_content/MudBlazor.ThemeManager",
+      "RelativePath": "MudBlazorThemeManager.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\yoshi\\.nuget\\packages\\mudblazor.thememanager\\1.0.7\\staticwebassets\\MudBlazorThemeManager.css"
+    },
     {
       "Identity": "C:\\Users\\yoshi\\.nuget\\packages\\mudblazor\\6.0.17\\staticwebassets\\MudBlazor.min.css",
       "SourceId": "MudBlazor",
