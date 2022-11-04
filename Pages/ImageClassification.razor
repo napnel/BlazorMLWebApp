@@ -34,7 +34,11 @@
                 </MudButton>
             </div>
             <div class="d-flex justify-space-between align-center mt-4">
-                <MudText>Prob: @_prediction</MudText>
+                <MudText>Label: @_imageData.Label</MudText>
+            </div>
+
+            <div class="d-flex justify-space-between align-center mt-4">
+                <MudText>Prob: @_imageData.probability</MudText>
             </div>
             <div class="d-flex justify-space-between align-center mt-4">
                 <InputFile id="ImageInputField" OnChange="UploadFiles" hidden multiple accept=".jpg, .jpeg, .png" />
@@ -80,7 +84,7 @@
     }
 
     private bool _processing = false;
-    private string _prediction = "";
+    private ImageData _imageData = new ImageData();
 
     private async Task Predict()
     {
@@ -92,7 +96,7 @@
 
         _processing = true;
         await Task.Delay(500);
-        _prediction = inference.PredictImage(image);
+        _imageData = inference.PredictImage(image);
         _processing = false;
     }
 }

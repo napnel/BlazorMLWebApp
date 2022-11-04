@@ -12,12 +12,12 @@ namespace BlazorMLWebApp.ImageClassification
             this.model = LoadModel(modelPath, inputColumnName, outputColumnName);
         }
 
-        public string PredictImage(ImageData image)
+        public ImageData PredictImage(ImageData image)
         {
             return PredictImages(new List<ImageData> { image }).First();
         }
 
-        public List<string> PredictImages(IEnumerable<ImageData> images)
+        public List<ImageData> PredictImages(IEnumerable<ImageData> images)
         {
             // Transform IDataView
             IDataView imageDataView = mlContext.Data.LoadFromEnumerable(images);
@@ -25,16 +25,16 @@ namespace BlazorMLWebApp.ImageClassification
             // Predict the image
             IDataView outputs = model.Transform(imageDataView);
             var predictions = mlContext.Data.CreateEnumerable<ImageData>(outputs, reuseRowObject: false).ToList();
-            List<string> res = new List<string>();
             foreach (var prediction in predictions)
             {
-                Console.WriteLine($"Image: {prediction.ImagePath}");
                 float[] probs = prediction.Scores;
                 int maxIndex = probs.ToList().IndexOf(probs.Max());
+                prediction.probability = probs[maxIndex];
+                prediction.Label = ImageNetSettings.labels[maxIndex];
+                Console.WriteLine($"Image: {prediction.ImagePath}");
                 Console.WriteLine($"Predicted Label: {ImageNetSettings.labels[maxIndex]} with probability {probs[maxIndex]}");
-                res.Add(ImageNetSettings.labels[maxIndex]);
             }
-            return res;
+            return predictions;
         }
 
         private ITransformer LoadModel(string modelPath, string inputColumnName, string outputColumnName)

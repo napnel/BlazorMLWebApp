@@ -6,6 +6,7 @@ namespace BlazorMLWebApp.ImageClassification
     {
         public string ImagePath = "";
         public string Label = "";
+        public float probability = 0;
         [ColumnName("softmaxout_1")]
         public float[] Scores = new float[1000];
 
