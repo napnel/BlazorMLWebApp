@@ -35,4 +35,4 @@ Open <https://localhost:7038/>
 
 ## Note
 
-It has been developed with Visual Studio Code.
+The development tool used is Visual Studio Code instead of Visual Studio.
