@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using BlazorMLWebApp.Data;
+using BlazorMLWebApp.Models;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

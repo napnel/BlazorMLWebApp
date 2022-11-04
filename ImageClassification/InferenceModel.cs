@@ -1,6 +1,6 @@
 using Microsoft.ML;
 
-namespace ImageClassification
+namespace BlazorMLWebApp.ImageClassification
 {
     public class InferenceModel
     {
@@ -12,7 +12,12 @@ namespace ImageClassification
             this.model = LoadModel(modelPath, inputColumnName, outputColumnName);
         }
 
-        public List<string> PredictImage(IEnumerable<ImageData> images)
+        public string PredictImage(ImageData image)
+        {
+            return PredictImages(new List<ImageData> { image }).First();
+        }
+
+        public List<string> PredictImages(IEnumerable<ImageData> images)
         {
             // Transform IDataView
             IDataView imageDataView = mlContext.Data.LoadFromEnumerable(images);
@@ -39,7 +44,8 @@ namespace ImageClassification
                 .Append(mlContext.Transforms.ResizeImages(outputColumnName: inputColumnName, imageWidth: ImageNetSettings.imageWidth, imageHeight: ImageNetSettings.imageHeight, inputColumnName: inputColumnName))
                 .Append(mlContext.Transforms.ExtractPixels(outputColumnName: inputColumnName))
                 .Append(mlContext.Transforms.ApplyOnnxModel(modelFile: modelPath, outputColumnName: outputColumnName, inputColumnName: inputColumnName));
-            return model = pipeline.Fit(data);
+            var model = pipeline.Fit(data);
+            return model;
         }
     }
 }

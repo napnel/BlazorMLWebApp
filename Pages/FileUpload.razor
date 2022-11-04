@@ -56,7 +56,7 @@
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         shouldRender = false;
-        long maxFileSize = 1024 * 15;
+        long maxFileSize = 1024 * 1024 * 15;
         var upload = false;
 
         using var content = new MultipartFormDataContent();
@@ -102,10 +102,10 @@
 
         if (upload)
         {
+            Logger.LogInformation("Uploading {FileCount} files");
             var response = await Http.PostAsync("/Filesave", content);
 
-            var newUploadResults = await response.Content
-            .ReadFromJsonAsync<IList<UploadResult>>();
+            var newUploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>();
 
             if (newUploadResults is not null)
             {

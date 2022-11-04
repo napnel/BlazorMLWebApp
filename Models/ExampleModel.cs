@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+namespace BlazorMLWebApp.Models;
 
 public class ExampleModel
 {

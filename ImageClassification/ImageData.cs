@@ -1,6 +1,6 @@
 using Microsoft.ML.Data;
 
-namespace ImageClassification
+namespace BlazorMLWebApp.ImageClassification
 {
     public class ImageData
     {

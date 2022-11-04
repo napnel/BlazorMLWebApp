@@ -96,3 +96,4 @@ C:\Users\yoshi\Documents\Repository\Blazor\BlazorMLWebApp\obj\Debug\net6.0\Blazo
 C:\Users\yoshi\Documents\Repository\Blazor\BlazorMLWebApp\obj\Debug\net6.0\BlazorMLWebApp.genruntimeconfig.cache
 C:\Users\yoshi\Documents\Repository\Blazor\BlazorMLWebApp\obj\Debug\net6.0\ref\BlazorMLWebApp.dll
 C:\Users\yoshi\Documents\Repository\Blazor\BlazorMLWebApp\bin\Debug\net6.0\MudBlazor.ThemeManager.dll
+C:\Users\yoshi\Documents\Repository\Blazor\BlazorMLWebApp\bin\Debug\net6.0\SixLabors.ImageSharp.dll

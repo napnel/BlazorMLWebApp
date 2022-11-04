@@ -1,4 +1,4 @@
-namespace ImageClassification
+namespace BlazorMLWebApp.ImageClassification
 {
     public static class ImageNetSettings
     {
@@ -8,7 +8,7 @@ namespace ImageClassification
         static string[] GetLabels()
         {
             List<string> labels = new List<string>();
-            string[] lines = File.ReadAllLines("Data/imagenet_labels.txt");
+            string[] lines = File.ReadAllLines(".\\wwwroot\\Texts\\imagenet_labels.txt");
             foreach (var line in lines)
             {
                 int spaceIndex = line.IndexOf(" ");
