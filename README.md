@@ -9,7 +9,7 @@ Here, the task is simply to classify images.
 
 ## Features
 
-For image inference, the [ONNX files](https://github.com/onnx/models/tree/main/vision/classification/squeezenet) for the SqueezeNet model trained on the ImageNet dataset are used.ONNX files are used to infer the images.
+For image inference, the [ONNX files](https://github.com/onnx/models/tree/main/vision/classification/squeezenet) for the SqueezeNet model trained on the ImageNet dataset are used.
 
 ## Dependencies
 
@@ -35,4 +35,5 @@ Open <https://localhost:7038/>
 
 ## Note
 
-The development tool used is Visual Studio Code instead of Visual Studio.
+* The development tool used is Visual Studio Code instead of Visual Studio.
+* ML.NET does not seem to support blazor-wasm. Details are discussed in [this isssue](https://github.com/dotnet/machinelearning/issues/5375). (It is said that the problem can be avoided by splitting the project into several projects)
