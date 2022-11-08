@@ -1,6 +1,7 @@
 @page "/ImageClassification"
-@using BlazorMLWebApp.ImageClassification
 @inject ILogger<ImageClassification> Logger
+@inject HttpClient Http
+
 
 <PageTitle>Image Classification</PageTitle>
 
@@ -33,13 +34,16 @@
                     }
                 </MudButton>
             </div>
-            <div class="d-flex justify-space-between align-center mt-4">
-                <MudText>Label: @_imageData.Label</MudText>
-            </div>
+            @if (_prediction != null)
+            {
+                <div class="d-flex justify-space-between align-center mt-4">
+                    <MudText>Label: @_prediction.label</MudText>
+                </div>
 
-            <div class="d-flex justify-space-between align-center mt-4">
-                <MudText>Prob: @_imageData.probability</MudText>
-            </div>
+                <div class="d-flex justify-space-between align-center mt-4">
+                    <MudText>Prob: @_prediction.probability</MudText>
+                </div>
+            }
             <div class="d-flex justify-space-between align-center mt-4">
                 <InputFile id="ImageInputField" OnChange="UploadFiles" hidden multiple accept=".jpg, .jpeg, .png" />
                 <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add"
@@ -55,11 +59,8 @@
 {
     public string Image { get; set; } = "dog.png";
     public int ImageWidth { get; set; } = 300;
-
     public ObjectFit ImageFit { get; set; } = ObjectFit.Cover;
-
     public bool IsUploading { get; set; } = false;
-
     private long maxFileSize = 1024 * 1024 * 24; // 24 MB
 
     private async Task UploadFiles(InputFileChangeEventArgs e)
@@ -77,26 +78,58 @@
         //TODO upload the files to the server
     }
 
-    InferenceModel inference = new InferenceModel("wwwroot/Onnx/SqueezeNet.onnx", "data_0", "softmaxout_1");
-    protected override void OnInitialized()
+    private bool _processing = false;
+    private string[] imageNetLabels = new string[] { };
+    private ImageDataOutput _prediction = null!;
+    private PredictionEngine<ImageDataInput, ImageDataOutput> _predictionEngine = null!;
+    protected override async Task OnInitializedAsync()
     {
-        Logger.LogInformation("OnInitialized called");
+        // imageNetLabels = await LoadLabels("imagenet_labels.txt");
+        Stream savedModel = await Http.GetStreamAsync("model.zip");
+        MLContext mlContext = new MLContext();
+        DataViewSchema modelSchema;
+        ITransformer mlModel = mlContext.Model.Load(savedModel, out modelSchema);
+        // _predictionEngine = mlContext.Model.CreatePredictionEngine<ImageData, ImageData>(mlModel);
+        Logger.LogInformation(Http.ToString());
+        // var response = await Http.GetAsync(_onnxUrl);
+        // Logger.LogInformation(response.Headers.ToString());
+        // Logger.LogInformation(response.StatusCode.ToString());
+        // Logger.LogInformation(response.ToString());
+        // var bytes = await response.Content.ReadAsByteArrayAsync();
+        // Logger.LogInformation(bytes.Length.ToString());
+        // _onnxUrl = Http.BaseAddress + "SqueezeNet.onnx";
+        // inference = new InferenceModel();
     }
 
-    private bool _processing = false;
-    private ImageData _imageData = new ImageData();
+    async Task<string[]> LoadLabels(string labelsLocation)
+    {
+        var content = await Http.GetStringAsync(labelsLocation);
+        var lines = content.Split(Environment.NewLine);
+        List<string> labels = new List<string>();
+        foreach (var line in lines)
+        {
+            int spaceIndex = line.IndexOf(' ');
+            if (spaceIndex > 0)
+            {
+                var label = line.Substring(spaceIndex + 1);
+                labels.Add(label);
+            }
+        }
+        return labels.ToArray();
+    }
 
     private async Task Predict()
     {
         Logger.LogInformation("Predict called");
-        ImageData image = new ImageData()
+        ImageDataInput image = new ImageDataInput()
         {
-            ImagePath = $"wwwroot/images/{Image}"
+            imagePath = $"wwwroot/images/{Image}"
         };
 
         _processing = true;
         await Task.Delay(500);
-        _imageData = inference.PredictImage(image);
+        ImageDataOutput prediction = _predictionEngine.Predict(image);
+        // _imageData = inference.PredictImage(image);
         _processing = false;
     }
 }
