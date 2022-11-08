@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{E79FF867-44BF-41B8-A976-01B1C5EFF0ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLConsoleApps", "MLConsoleApps\MLConsoleApps.csproj", "{DEA51B71-0003-49F9-804C-BCC34D71E133}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E79FF867-44BF-41B8-A976-01B1C5EFF0ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79FF867-44BF-41B8-A976-01B1C5EFF0ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79FF867-44BF-41B8-A976-01B1C5EFF0ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79FF867-44BF-41B8-A976-01B1C5EFF0ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
