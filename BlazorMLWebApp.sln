@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLConsoleApps", "MLConsoleApps\MLConsoleApps.csproj", "{DEA51B71-0003-49F9-804C-BCC34D71E133}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLModel", "MLModel\MLModel.csproj", "{F1A1D730-318F-4583-9439-56838D9DDFE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEA51B71-0003-49F9-804C-BCC34D71E133}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1A1D730-318F-4583-9439-56838D9DDFE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1A1D730-318F-4583-9439-56838D9DDFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1A1D730-318F-4583-9439-56838D9DDFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1A1D730-318F-4583-9439-56838D9DDFE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
