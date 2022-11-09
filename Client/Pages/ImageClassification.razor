@@ -86,6 +86,7 @@
     {
         // imageNetLabels = await LoadLabels("imagenet_labels.txt");
         Stream savedModel = await Http.GetStreamAsync("model.zip");
+        Logger.LogInformation(savedModel.Length.ToString());
         MLContext mlContext = new MLContext();
         DataViewSchema modelSchema;
         ITransformer mlModel = mlContext.Model.Load(savedModel, out modelSchema);

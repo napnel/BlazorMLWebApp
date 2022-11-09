@@ -7,16 +7,14 @@ namespace BlazorMLWebApp.ImageClassification
     {
         MLContext mlContext = new MLContext();
         ITransformer model;
-        public InferenceModel(string filePath = null!)
+        public InferenceModel()
         {
-            if (filePath == null)
-            {
-                model = LoadModel(ModelSettings.modelPath, ModelSettings.inputColumnName, ModelSettings.outputColumnName);
-            }
-            else
-            {
-                model = LoadModelFromZip(filePath);
-            }
+            model = LoadModel(ModelSettings.modelPath, ModelSettings.inputColumnName, ModelSettings.outputColumnName);
+        }
+
+        public InferenceModel(Stream zipFileUrl)
+        {
+            model = LoadModelFromZip(zipFileUrl);
         }
 
         public ImageDataOutput PredictImage(ImageDataInput image)
@@ -66,9 +64,9 @@ namespace BlazorMLWebApp.ImageClassification
             return model;
         }
 
-        public ITransformer LoadModelFromZip(string zipFilePath)
+        public ITransformer LoadModelFromZip(Stream zipFileUrl)
         {
-            return mlContext.Model.Load(zipFilePath, out var modelInputSchema);
+            return mlContext.Model.Load(zipFileUrl, out var modelInputSchema);
         }
     }
 }

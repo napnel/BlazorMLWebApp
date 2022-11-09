@@ -2,7 +2,7 @@ using BlazorMLWebApp.ImageClassification;
 using BlazorMLWebApp.ImageClassification.Settings;
 using Microsoft.ML;
 
-InferenceModel inference = new InferenceModel(filePath: null!);
+InferenceModel inference = new InferenceModel();
 string exportPath = System.IO.Path.GetFullPath(@"Client\\wwwroot\\model.zip");
 Console.WriteLine($"Exporting model to {exportPath}");
 inference.ExportZipFile(exportPath);
