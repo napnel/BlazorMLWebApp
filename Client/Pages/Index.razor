@@ -14,11 +14,11 @@
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("Hello, world!");
-        string modelPath = Path.Combine(AppContext.BaseDirectory, "model.zip");
-        Console.WriteLine($"Model path: {modelPath}");
+
         Stream savedModel = await Http.GetStreamAsync("model.zip");
         Console.WriteLine($"Model size: {savedModel.Length}");
-        InferenceModel model = new InferenceModel(savedModel);
+
+        InferenceModel model = new InferenceModel(zipFileUrl: savedModel);
         ImageDataInput image = new ImageDataInput()
         {
             imagePath = $"wwwroot/images/dog.png"

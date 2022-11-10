@@ -7,9 +7,13 @@ namespace BlazorMLWebApp.ImageClassification
     {
         MLContext mlContext = new MLContext();
         ITransformer model;
-        public InferenceModel()
+        public InferenceModel(string modelPath = null!)
         {
-            model = LoadModel(ModelSettings.modelPath, ModelSettings.inputColumnName, ModelSettings.outputColumnName);
+            if (modelPath == null)
+            {
+                modelPath = ModelSettings.modelPath;
+            }
+            model = LoadModel(modelPath, ModelSettings.inputColumnName, ModelSettings.outputColumnName);
         }
 
         public InferenceModel(Stream zipFileUrl)
