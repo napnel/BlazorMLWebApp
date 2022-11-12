@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject HttpClient Http
+@inject IJSRuntime JS
 
 <PageTitle>Index</PageTitle>
 
@@ -9,20 +10,22 @@
         Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit"><b>www.mudblazor.com</b></MudLink>
 </MudAlert>
 
+<div class="row">
+    <button class="btn btn-success" @onclick="ClickMe">
+        Click me
+    </button>
+    <button class="btn btn-success" @onclick="ClickMe">
+        Click me
+    </button>
+
+</div>
+
+
 @code
 {
-    protected override async Task OnInitializedAsync()
+    private async Task ClickMe()
     {
-        Console.WriteLine("Hello, world!");
-
-        Stream savedModel = await Http.GetStreamAsync("model.zip");
-        Console.WriteLine($"Model size: {savedModel.Length}");
-
-        InferenceModel model = new InferenceModel(zipFileUrl: savedModel);
-        ImageDataInput image = new ImageDataInput()
-        {
-            imagePath = $"wwwroot/images/dog.png"
-        };
-        model.PredictImage(image);
+        // await JS.InvokeVoidAsync("alert", "Hello from C#!");
+        await JS.InvokeVoidAsync("hello");
     }
 }

@@ -86,20 +86,10 @@
     {
         // imageNetLabels = await LoadLabels("imagenet_labels.txt");
         Stream savedModel = await Http.GetStreamAsync("model.zip");
-        Logger.LogInformation(savedModel.Length.ToString());
         MLContext mlContext = new MLContext();
         DataViewSchema modelSchema;
         ITransformer mlModel = mlContext.Model.Load(savedModel, out modelSchema);
-        // _predictionEngine = mlContext.Model.CreatePredictionEngine<ImageData, ImageData>(mlModel);
         Logger.LogInformation(Http.ToString());
-        // var response = await Http.GetAsync(_onnxUrl);
-        // Logger.LogInformation(response.Headers.ToString());
-        // Logger.LogInformation(response.StatusCode.ToString());
-        // Logger.LogInformation(response.ToString());
-        // var bytes = await response.Content.ReadAsByteArrayAsync();
-        // Logger.LogInformation(bytes.Length.ToString());
-        // _onnxUrl = Http.BaseAddress + "SqueezeNet.onnx";
-        // inference = new InferenceModel();
     }
 
     async Task<string[]> LoadLabels(string labelsLocation)
