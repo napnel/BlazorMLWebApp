@@ -1,5 +1,18 @@
-import * as ort from 'onnxruntime-web';
-// use an async context to call onnxruntime functions.
+let session;
+
+async function runOnnxRunTime(image)
+{
+    document.writeln("runOnnxRunTime called");
+    if (session == null)
+    {
+        session = await ort.InferenceSession.create('./SqueezeNet.onnx');
+    }
+    const input = Float32Array.from(image);
+    const tensor = new ort.Tensor('float32', input, [1, 3, 224, 224]);
+    const results = await session.run({ 'data_0': tensor});
+    return Array.from(results["softmaxout_1"].data);
+}
+
 async function main() {
     try {
         // create a new session and load the specific model.
@@ -7,7 +20,7 @@ async function main() {
         // the model in this example contains a single MatMul node
         // it has 2 inputs: 'a'(float32, 3x4) and 'b'(float32, 4x3)
         // it has 1 output: 'c'(float32, 3x3)
-        const session = await ort.InferenceSession.create('./model.onnx');
+        const session = await ort.InferenceSession.create('./SqueezeNet.onnx');
 
         // prepare inputs. a tensor need its corresponding TypedArray as data
         const dataA = Float32Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -31,5 +44,6 @@ async function main() {
 }
 
 async function hello() {
-    window.alert('hello');
+    main();
+    // window.alert('hello');
 }
