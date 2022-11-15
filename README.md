@@ -36,4 +36,4 @@ Open <https://localhost:7038/>
 ## Note
 
 * The development tool used is Visual Studio Code instead of Visual Studio.
-* ML.NET does not seem to support blazor-wasm. Details are discussed in [this isssue](https://github.com/dotnet/machinelearning/issues/5375). (It is said that the problem can be avoided by splitting the project into several projects)
+* ML.NET does not seem to support blazor-wasm. Details are discussed in [this isssue](https://github.com/dotnet/machinelearning/issues/5375). ~~(It is said that the problem can be avoided by splitting the project into several projects)~~ I will load the onnx through Javascript and infer.

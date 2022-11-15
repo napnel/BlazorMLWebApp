@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/BlazorMLWebApp.csproj",
+                "${workspaceFolder}/MLConsoleApps/MLConsoleApps.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/BlazorMLWebApp.csproj",
+                "${workspaceFolder}/MLConsoleApps/MLConsoleApps.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/BlazorMLWebApp.csproj"
+                "${workspaceFolder}/MLConsoleApps/MLConsoleApps.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

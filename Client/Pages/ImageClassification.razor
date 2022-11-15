@@ -1,0 +1,127 @@
+@page "/ImageClassification"
+@inject ILogger<ImageClassification> Logger
+@inject HttpClient Http
+
+
+<PageTitle>Image Classification</PageTitle>
+NET does not work within Blazor Wasm.
+Reference: https://github.com/dotnet/runtime/issues/41556
+<MudGrid>
+    <MudItem xs="6" md="8" Class="d-flex justify-center align-center" Style="height:500px;">
+        <MudImage ObjectFit="ImageFit" Height="null" Width="@ImageWidth" Src="@($"images/{Image}")" Alt="Alt Image"
+            Elevation="25" Class="rounded-lg" />
+    </MudItem>
+
+    <MudItem xs="6" md="4">
+        <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0">
+            <MudText Typo="Typo.h6">Options</MudText>
+            <MudSelect Label="Image" AnchorOrigin="Origin.BottomCenter" Dense="true" Margin="Margin.Dense"
+                @bind-Value="Image" Class="mt-4">
+                <MudSelectItem T="string" Value="@("dog.png")">Dog</MudSelectItem>
+                <MudSelectItem T="string" Value="@("elephant.jpg")">Elephant</MudSelectItem>
+                <MudSelectItem T="string" Value="@("fox.jpg")">Fox</MudSelectItem>
+            </MudSelect>
+            <div class="d-flex justify-space-between align-center mt-4">
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Surface"
+                    OnClick="Predict">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Processing</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Predict</MudText>
+                    }
+                </MudButton>
+            </div>
+            @if (_prediction != null)
+            {
+                <div class="d-flex justify-space-between align-center mt-4">
+                    <MudText>Label: @_prediction.label</MudText>
+                </div>
+
+                <div class="d-flex justify-space-between align-center mt-4">
+                    <MudText>Prob: @_prediction.probability</MudText>
+                </div>
+            }
+            <div class="d-flex justify-space-between align-center mt-4">
+                <InputFile id="ImageInputField" OnChange="UploadFiles" hidden multiple accept=".jpg, .jpeg, .png" />
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add"
+                    for="ImageInputField">
+                    Add image
+                </MudButton>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    public string Image { get; set; } = "dog.png";
+    public int ImageWidth { get; set; } = 300;
+    public ObjectFit ImageFit { get; set; } = ObjectFit.Cover;
+    public bool IsUploading { get; set; } = false;
+    private long maxFileSize = 1024 * 1024 * 24; // 24 MB
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        var entries = e.GetMultipleFiles();
+        IsUploading = true;
+
+        foreach (var file in e.GetMultipleFiles())
+        {
+            MemoryStream stream = new MemoryStream();
+            await file.OpenReadStream(maxFileSize).CopyToAsync(stream);
+        }
+
+        //Do your validations here
+        //TODO upload the files to the server
+    }
+
+    private bool _processing = false;
+    private string[] imageNetLabels = new string[] { };
+    private ImageDataOutput _prediction = null!;
+    private PredictionEngine<ImageDataInput, ImageDataOutput> _predictionEngine = null!;
+    protected override async Task OnInitializedAsync()
+    {
+        // imageNetLabels = await LoadLabels("imagenet_labels.txt");
+        Stream savedModel = await Http.GetStreamAsync("model.zip");
+        MLContext mlContext = new MLContext();
+        DataViewSchema modelSchema;
+        ITransformer mlModel = mlContext.Model.Load(savedModel, out modelSchema);
+        Logger.LogInformation(Http.ToString());
+    }
+
+    async Task<string[]> LoadLabels(string labelsLocation)
+    {
+        var content = await Http.GetStringAsync(labelsLocation);
+        var lines = content.Split(Environment.NewLine);
+        List<string> labels = new List<string>();
+        foreach (var line in lines)
+        {
+            int spaceIndex = line.IndexOf(' ');
+            if (spaceIndex > 0)
+            {
+                var label = line.Substring(spaceIndex + 1);
+                labels.Add(label);
+            }
+        }
+        return labels.ToArray();
+    }
+
+    private async Task Predict()
+    {
+        Logger.LogInformation("Predict called");
+        ImageDataInput image = new ImageDataInput()
+        {
+            imagePath = $"wwwroot/images/{Image}"
+        };
+
+        _processing = true;
+        await Task.Delay(500);
+        ImageDataOutput prediction = _predictionEngine.Predict(image);
+        // _imageData = inference.PredictImage(image);
+        _processing = false;
+    }
+}
