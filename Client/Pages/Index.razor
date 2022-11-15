@@ -1,46 +1,164 @@
 ﻿@page "/"
+@using System.Diagnostics
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
+@using SixLabors.ImageSharp.PixelFormats
 @inject HttpClient Http
 @inject IJSRuntime JS
-@using OpenCvSharp
-@* @using SixLabors.ImageSharp
-    @using SixLabors.ImageSharp.Processing
-    @using SixLabors.ImageSharp.PixelFormats *@
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Image Classification</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
-<MudAlert Severity="Severity.Normal">You can find documentation and examples on our website here: <MudLink
-        Href="https://mudblazor.com" Typo="Typo.body2" Color="MudBlazor.Color.Inherit"><b>www.mudblazor.com</b>
-    </MudLink>
-</MudAlert>
+<MudGrid>
+    <MudItem xs="6" md="8" Class="d-flex justify-center align-center" Style="height:500px;">
+        <MudImage ObjectFit="ImageFit" Height="null" Width="@ImageWidth" Src="@($"images/{sampleImage}")"
+            Alt="Alt Image"></MudImage>
+    </MudItem>
 
-<div class="row">
-    <button class="btn btn-success" @onclick="ClickMe">
-        Click me
-    </button>
-    <button class="btn btn-success" @onclick="ClickMe">
-        Click me
-    </button>
-
-</div>
+    <MudItem xs="6" md="4">
+        <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0">
+            <MudText Typo="Typo.h6">Options</MudText>
+            <MudSelect Label="Image" AnchorOrigin="Origin.BottomCenter" Dense="true" Margin="Margin.Dense"
+                @bind-Value="sampleImage" Class="mt-4">
+                <MudSelectItem T="string" Value="@("dog.png")">Dog</MudSelectItem>
+                <MudSelectItem T="string" Value="@("elephant.jpg")">Elephant</MudSelectItem>
+                <MudSelectItem T="string" Value="@("fox.jpg")">Fox</MudSelectItem>
+            </MudSelect>
+            <MudButton Disabled="@_processing" OnClick="Predict" Variant="Variant.Filled"
+                Color="MudBlazor.Color.Primary">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="MudBlazor.Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Processing</MudText>
+                }
+                else
+                {
+                    <MudText>Predict</MudText>
+                }
+            </MudButton>
+            @if (predictedLabel != null)
+            {
+                <MudStack>
+                    <MudText>Label: @predictedLabel</MudText>
+                    <MudText>Prob: @predictedProbability</MudText>
+                    <MudText>Load Image Time: @recoder.LoadImageTime ms</MudText>
+                    <MudText>Preprocess Time: @recoder.PreprocessTime ms</MudText>
+                    <MudText>Inference Time: @recoder.InferenceTime ms</MudText>
+                </MudStack>
+            }
+            <div class="d-flex justify-space-between align-center mt-4">
+                <InputFile id="ImageInputField" OnChange="UploadFiles" hidden multiple accept=".jpg, .jpeg, .png" />
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="MudBlazor.Color.Primary"
+                    StartIcon="@Icons.Filled.Add" for="ImageInputField">
+                    Add image
+                </MudButton>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 
 @code
 {
-    private async Task ClickMe()
+    readonly string labelPath = "assets/ImagenetLabels.txt";
+    readonly string modelPath = "assets/SqueezeNet.onnx";
+
+    private string sampleImage { get; set; } = "dog.png";
+    private int ImageWidth { get; set; } = 300;
+    private ObjectFit ImageFit { get; set; } = ObjectFit.Cover;
+    private bool IsUploading { get; set; } = false;
+    private long maxFileSize = 1024 * 1024 * 24; // 24 MB
+    private string[] imageNetLabels = new string[] { };
+
+    private bool _processing = false;
+    private string predictedLabel = null!;
+    private float predictedProbability = 0;
+
+    class RecordedRunTime
     {
-        // await JS.InvokeVoidAsync("alert", "Hello from C#!");
-        Stream imageStream = await Http.GetStreamAsync("images/dog.png");
+        public float LoadImageTime { get; set; }
+        public float PreprocessTime { get; set; }
+        public float InferenceTime { get; set; }
+    }
+
+    private RecordedRunTime recoder = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        imageNetLabels = await LoadLabels(labelPath);
+    }
+
+    async Task<string[]> LoadLabels(string labelsLocation)
+    {
+        var content = await Http.GetStringAsync(labelsLocation);
+        var lines = content.Split(Environment.NewLine);
+        List<string> labels = new List<string>();
+        foreach (var line in lines)
+        {
+            int spaceIndex = line.IndexOf(' ');
+            if (spaceIndex > 0)
+            {
+                var label = line.Substring(spaceIndex + 1);
+                labels.Add(label);
+            }
+        }
+        return labels.ToArray();
+    }
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        var entries = e.GetMultipleFiles();
+        IsUploading = true;
+
+        foreach (var file in e.GetMultipleFiles())
+        {
+            MemoryStream imageStream = new MemoryStream();
+            await file.OpenReadStream(maxFileSize).CopyToAsync(imageStream);
+        }
+
+    }
+
+    private float[] PreprocessImage(Image<Rgba32> image)
+    {
+        image.Mutate(x => x.Resize(224, 224));
+        float[] imageView = new float[1 * 3 * 224 * 224];
+        for (int i = 0; i < 224; i++)
+        {
+            for (int j = 0; j < 224; j++)
+            {
+                imageView[0 * 3 * 224 * 224 + 0 * 224 * 224 + i * 224 + j] = image[j, i].R;
+                imageView[0 * 3 * 224 * 224 + 1 * 224 * 224 + i * 224 + j] = image[j, i].G;
+                imageView[0 * 3 * 224 * 224 + 2 * 224 * 224 + i * 224 + j] = image[j, i].B;
+            }
+        }
+        return imageView;
+    }
+
+    private async Task Predict()
+    {
+        recoder = new RecordedRunTime();
+        Stopwatch stopwatch = new Stopwatch();
+        _processing = true;
+
+        stopwatch.Start();
+        Stream imageStream = await Http.GetStreamAsync("images/" + sampleImage);
+        using Image<Rgba32> image = await Image.LoadAsync<Rgba32>(imageStream);
         Console.WriteLine("Sucessfully loaded image");
+        stopwatch.Stop();
+        recoder.LoadImageTime = stopwatch.ElapsedMilliseconds;
 
-        var inputArray = new float[1, 3, 224, 224];
-        // var resized = input.Resize(new OpenCvSharp.Size(224, 224));
-
+        stopwatch.Restart();
+        float[] imageView = PreprocessImage(image);
         Console.WriteLine("Sucessfully converted image to array");
+        stopwatch.Stop();
+        recoder.PreprocessTime = stopwatch.ElapsedMilliseconds;
 
-        float[] probs = await JS.InvokeAsync<float[]>("runOnnxRunTime", inputArray);
+        stopwatch.Restart();
+        float[] softmax_outputs = await JS.InvokeAsync<float[]>("runOnnxRunTime", modelPath, imageView);
+        predictedProbability = softmax_outputs.Max();
+        predictedLabel = imageNetLabels[softmax_outputs.ToList().IndexOf(predictedProbability)];
+        stopwatch.Stop();
+        recoder.InferenceTime = stopwatch.ElapsedMilliseconds;
 
-        Console.WriteLine(probs);
+        _processing = false;
     }
 }
